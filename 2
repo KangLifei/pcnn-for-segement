@@ -1,0 +1,71 @@
+from PyQt5 import *
+import configparser
+from test4 import Ui_MainWindow
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore
+import sys
+
+
+class UI(object):
+    def __init__(self):
+        QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+        self.app = QtWidgets.QApplication(sys.argv)  # 生成应用
+        self.window = QtWidgets.QMainWindow()  # 生成窗口q
+        self.ui = Ui_MainWindow()  # 使用QTdesigner自动创建的类
+        self.ui.setupUi(self.window)
+        self.win_adjust()
+        self.window.show()
+        self.others()
+        sys.exit(self.app.exec_())
+
+    def others(self):
+        self.ui.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.component_connect()
+        self.load_config()
+
+    def win_adjust(self):
+        import win32api, win32con
+        # self.window.resize(win32api.GetSystemMetrics(win32con.SM_CXSCREEN) / 2,
+        #                    win32api.GetSystemMetrics(win32con.SM_CYSCREEN) / 2)
+
+    def component_connect(self):
+        self.ui.pushButton.clicked.connect(self.login)
+
+    def load_config(self):
+        config = configparser.ConfigParser()
+        file = config.read('user.ini')
+        config_dict = config.defaults()
+        self.user_name = config_dict['user_name']
+        self.ui.lineEdit.setText(self.user_name)
+        if config_dict['remember'] == 'True':
+            self.password = config_dict['password']
+            self.ui.lineEdit_2.setText(self.password)
+            self.ui.checkBox.setChecked(True)
+        else:
+            self.ui.checkBox.setChecked(False)
+
+    def login(self):
+        self.user_name = self.ui.lineEdit.text()
+        self.password = self.ui.lineEdit_2.text()
+        config = configparser.ConfigParser()
+        if self.ui.checkBox.isChecked():
+            config["DEFAULT"] = {
+                "user_name": self.user_name,
+                "password": self.password,
+                "remember": self.ui.checkBox.isChecked()
+            }
+        else:
+            config["DEFAULT"] = {
+                "user_name": self.user_name,
+                "password": "",
+                "remember": self.ui.checkBox.isChecked()
+            }
+        with open('user.ini', 'w')as configfile:
+            config.write((configfile))
+
+        # print(self.user_name, self.password)
+
+
+if __name__ == '__main__':
+    # import reInterpreter as inter
+    ui = UI()
