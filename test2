@@ -1,0 +1,31 @@
+from PyQt5 import QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
+from login1 import Ui_MainWindow
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import *
+from test import *
+
+class MyWindow(QtWidgets.QMainWindow,Ui_MainWindow):
+    def __init__(self):
+        super(MyWindow,self).__init__()
+        self.setupUi(self)
+        self.groupBox.setStyleSheet("background-image:url(background3.jpg)")
+        self.pushButton.clicked.connect(self.word_get)
+        self.lineEdit_key.setEchoMode(QtWidgets.QLineEdit.Password)
+    def word_get(self):
+        login_user = self.lineEdit_user.text()
+        login_password = self.lineEdit_key.text()
+        if login_user == 'kanglifei' and login_password == '123456':
+            segment_window.show()
+            Ui_MainWindow.close()
+        else:
+            QMessageBox.warning(self, "警告","用户名或密码错误！",QMessageBox.Yes)
+            self.lineEdit.setFocus()
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    myshow = MyWindow()
+    segment_window = mywindow()
+    myshow.show()
+    sys.exit(app.exec_())
